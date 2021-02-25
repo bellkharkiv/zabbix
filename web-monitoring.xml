@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zabbix_export>
+    <version>5.0</version>
+    <date>2021-02-25T04:23:14Z</date>
+    <groups>
+        <group>
+            <name>Web monitoring</name>
+        </group>
+    </groups>
+    <templates>
+        <template>
+            <template>Web monitoring</template>
+            <name>Web monitoring</name>
+            <description>Web monitoring</description>
+            <groups>
+                <group>
+                    <name>Web monitoring</name>
+                </group>
+            </groups>
+            <applications>
+                <application>
+                    <name>web</name>
+                </application>
+            </applications>
+            <httptests>
+                <httptest>
+                    <name>Checking http/https</name>
+                    <application>
+                        <name>web</name>
+                    </application>
+                    <authentication>BASIC</authentication>
+                    <http_user>{$HTTP_USER}</http_user>
+                    <http_password>{$HTTP_PASSWORD}</http_password>
+                    <steps>
+                        <step>
+                            <name>{HOST.NAME}</name>
+                            <url>{$HTTP_TYPE}{HOST.DNS}{$HOST_URL}</url>
+                            <timeout>20s</timeout>
+                            <status_codes>200</status_codes>
+                        </step>
+                    </steps>
+                </httptest>
+            </httptests>
+        </template>
+    </templates>
+    <triggers>
+        <trigger>
+            <expression>{Web monitoring:web.test.fail[Checking http/https].sum(#3)}=3</expression>
+            <name>Host is not available</name>
+            <priority>HIGH</priority>
+            <description>{HOST.NAME} is not available</description>
+        </trigger>
+    </triggers>
+</zabbix_export>
